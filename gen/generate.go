@@ -13,14 +13,26 @@ func Generate(file ...string) error {
 
 	fmt.Println(fullPath)
 
+	makeValidator := false
+
 	structs, err := csgen.GetStructs("test_struct.go")
 	if err != nil {
 		return err
 	}
 
+	if len(structs) == 0 {
+		return nil
+	}
+
+	pkg := structs[0].Package
+	outFileName := "test_struct"
+
+	builder := csgen.NewCSGenBuilderForFile("csval", pkg)
+	builder.WriteString(getImportStatement())
+
 	for _, st := range structs {
 		fmt.Println(st.Name)
-		makeValidator := false
+		fileContents := buildValidator(st, builder)
 
 		for _, f := range st.Fields {
 			valTags := f.GetTag("csval")
@@ -29,28 +41,24 @@ func Generate(file ...string) error {
 				continue
 			}
 
-			fileContents := buildValidator(st)
-
 			fmt.Print(fileContents)
-
-			valFile := getGeneratedFileName(strings.ToLower(st.Name))
-			err = csgen.WriteGeneratedGoFile(valFile, fileContents)
-			if err != nil {
-				fmt.Printf("error writing file: %v", err)
-			}
+			makeValidator = true
 		}
+	}
 
-		fmt.Printf("%s - create validator:\n\n %v", st.Name, makeValidator)
+	if makeValidator {
+		valFile := getGeneratedFileName(strings.ToLower(outFileName))
+		err = csgen.WriteGeneratedGoFile(valFile, builder.String())
+		if err != nil {
+			fmt.Printf("error writing file: %v", err)
+			return err
+		}
 	}
 
 	return nil
 }
 
-func buildValidator(st csgen.Struct) string {
-	builder := csgen.NewCSGenBuilderForFile("csval", st.Package)
-
-	builder.WriteString(getImportStatement())
-
+func buildValidator(st csgen.Struct, builder *strings.Builder) string {
 	builder.WriteString(fmt.Sprintf("func (obj *%s) Validate() csval.ValidationResult {", st.Name))
 	builder.WriteByte('\n')
 
@@ -72,40 +80,52 @@ func buildValidator(st csgen.Struct) string {
 		builder.WriteString(fmt.Sprintf("//---Field: %s", f.Name))
 		builder.WriteByte('\n')
 
-		if _, ok := tm["obj"]; ok {
-			builder.WriteString(getCheckForObject(f.Name))
-			builder.WriteByte('\n')
-			continue
-		}
-
-		if _, ok := tm["req"]; ok {
-			builder.WriteString(getIsRequired(f.Name))
-			builder.WriteByte('\n')
-		}
-
-		if _, ok := tm["email"]; ok {
-			builder.WriteString(getIsEmail(f.Name))
-			builder.WriteByte('\n')
-		}
-
-		if min, ok := tm["min"]; ok {
-			if f.Type == "string" {
-				builder.WriteString(getIsLengthGreaterThan(f.Name, min.(string)))
-			} else if f.Type == "int" {
-				builder.WriteString(getIsGreaterThan(f.Name, min.(string)))
+		if f.IsPrimitive {
+			if _, ok := tm["req"]; ok {
+				builder.WriteString(getIsRequired(f.Name))
+				builder.WriteByte('\n')
 			}
 
-			builder.WriteByte('\n')
-		}
-
-		if max, ok := tm["max"]; ok {
-			if f.Type == "string" {
-				builder.WriteString(getIsLengthLessThan(f.Name, max.(string)))
-			} else if f.Type == "int" {
-				builder.WriteString(getIsLessThan(f.Name, max.(string)))
+			if _, ok := tm["email"]; ok {
+				builder.WriteString(getIsEmail(f.Name))
+				builder.WriteByte('\n')
 			}
 
-			builder.WriteByte('\n')
+			if _, ok := tm["url"]; ok {
+				builder.WriteString(getIsUrl(f.Name))
+				builder.WriteByte('\n')
+			}
+
+			if _, ok := tm["ip"]; ok {
+				builder.WriteString(getIsIP(f.Name))
+				builder.WriteByte('\n')
+			}
+
+			if min, ok := tm["min"]; ok {
+				if f.Type == "string" {
+					builder.WriteString(getIsLengthGreaterThan(f.Name, min.(string)))
+				} else if f.Type == "int" {
+					builder.WriteString(getIsGreaterThan(f.Name, min.(string)))
+				}
+
+				builder.WriteByte('\n')
+			}
+
+			if max, ok := tm["max"]; ok {
+				if f.Type == "string" {
+					builder.WriteString(getIsLengthLessThan(f.Name, max.(string)))
+				} else if f.Type == "int" {
+					builder.WriteString(getIsLessThan(f.Name, max.(string)))
+				}
+
+				builder.WriteByte('\n')
+			}
+		} else {
+			if _, ok := tm["obj"]; ok {
+				builder.WriteString(getCheckForObject(f.Name))
+				builder.WriteByte('\n')
+				continue
+			}
 		}
 	}
 
@@ -166,6 +186,14 @@ func getIsRequired(field string) string {
 
 func getIsEmail(field string) string {
 	return fmt.Sprintf("result.Append(csval.IsEmail(\"%s\", obj.%s))", field, field)
+}
+
+func getIsUrl(field string) string {
+	return fmt.Sprintf("result.Append(csval.IsValidWebAddress(\"%s\", obj.%s))", field, field)
+}
+
+func getIsIP(field string) string {
+	return fmt.Sprintf("result.Append(csval.IsIP(\"%s\", obj.%s))", field, field)
 }
 
 func getIsGreaterThan(field string, min string) string {

@@ -1,6 +1,7 @@
 package csval
 
 import (
+	"net"
 	"net/mail"
 	"net/url"
 )
@@ -68,6 +69,16 @@ func IsValidWebAddress(field string, input string) ValidationResult {
 	}
 
 	return NewFailingValidationResult(NewValidationMessage(field, "web address is not valid"))
+}
+
+// IsIP return success if the string is a valid IP format
+func IsIP(field string, input string) ValidationResult {
+	ip := net.ParseIP(input)
+	if ip != nil {
+		return NewSuccessValidationResult()
+	}
+
+	return NewFailingValidationResult(NewValidationMessage(field, "IP is not valid"))
 }
 
 // IsGreaterThan  return success if the value of the number is less than the maximum

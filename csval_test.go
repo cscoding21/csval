@@ -28,11 +28,12 @@ var testData = TestStruct{
 	Password: "password",
 	Age:      21,
 	Sub: TestSubStruct{
-		IP:   "0.0.0.0",
+		IP:   "0.0.0.1",
 		Port: 8080,
 	},
 }
 
+// ---#########################################################################
 // ---Sample of validate function created by code generator
 func (obj *TestStruct) Validate() ValidationResult {
 	result := NewSuccessValidationResult()
@@ -63,9 +64,12 @@ func (obj *TestSubStruct) Validate() ValidationResult {
 
 	// ---Field: IP
 	result.Append(IsNotEmpty("IP", obj.IP))
+	result.Append(IsIP("IP", obj.IP))
 
 	return result
 }
+
+//---#########################################################################
 
 func TestObjectValidate(t *testing.T) {
 	result := testData.Validate()
