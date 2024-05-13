@@ -1,39 +1,68 @@
 package csval
 
 import (
+	"fmt"
 	"testing"
 )
 
 // ---Sample of struct to be validated
 type TestStruct struct {
-	Name    string `csval:"req"`
-	Email   string `csval:"req,email"`
-	Address string
-	Age     int `csval:"min(18),max(65)"`
+	Name     string `csval:"req"`
+	Email    string `csval:"req,email"`
+	Address  string
+	Password string        `csval:"min(3),max(11)"`
+	Age      int           `csval:"min(18),max(65)"`
+	Sub      TestSubStruct `csval:"obj"`
+}
+
+type TestSubStruct struct {
+	IP   string `csval:"req,ip"`
+	Port int
 }
 
 // ---Sample test data
 var testData = TestStruct{
-	Name:    "test",
-	Email:   "tet@Test.com",
-	Address: "",
-	Age:     21,
+	Name:     "test",
+	Email:    "tet@Test.com",
+	Address:  "",
+	Password: "password",
+	Age:      21,
+	Sub: TestSubStruct{
+		IP:   "0.0.0.0",
+		Port: 8080,
+	},
 }
 
 // ---Sample of validate function created by code generator
 func (obj *TestStruct) Validate() ValidationResult {
 	result := NewSuccessValidationResult()
 
-	//---Name
-	result.Append(IsNotEmpty(obj.Name))
+	// ---Field: Name
+	result.Append(IsNotEmpty("Name", obj.Name))
 
-	//---Email
-	result.Append(IsNotEmpty(obj.Email))
-	result.Append(IsEmail(obj.Email))
+	// ---Field: Email
+	result.Append(IsNotEmpty("Email", obj.Email))
+	result.Append(IsEmail("Email", obj.Email))
 
-	//---Age
-	result.Append(IsGreaterThan(obj.Age, 18))
-	result.Append(IsLessThan(obj.Age, 65))
+	// ---Field: Password
+	result.Append(IsLengthGreaterThan("Password", obj.Password, 3))
+	result.Append(IsLengthLessThan("Password", obj.Password, 11))
+
+	// ---Field: Age
+	result.Append(IsGreaterThan("Age", obj.Age, 18))
+	result.Append(IsLessThan("Age", obj.Age, 65))
+
+	// ---Field: Sub
+	result.Append(obj.Sub.Validate())
+
+	return result
+}
+
+func (obj *TestSubStruct) Validate() ValidationResult {
+	result := NewSuccessValidationResult()
+
+	// ---Field: IP
+	result.Append(IsNotEmpty("IP", obj.IP))
 
 	return result
 }
@@ -58,9 +87,9 @@ func TestIsNotEmpty(t *testing.T) {
 		{ok: true, have: "", want: false},
 	}
 
-	for _, input := range testCases {
-		if IsNotEmpty(input.have).Pass != input.want {
-			t.Errorf("stringRequired failed with input %s", input.have)
+	for i, input := range testCases {
+		if IsNotEmpty(fmt.Sprintf("test%v", i), input.have).Pass != input.want {
+			t.Errorf("string Required failed with input %s", input.have)
 		}
 	}
 }
@@ -75,8 +104,8 @@ func TestIsEmail(t *testing.T) {
 		{ok: true, have: "jeph@cscoding.io", want: true},
 	}
 
-	for _, input := range testCases {
-		if IsEmail(input.have).Pass != input.want {
+	for i, input := range testCases {
+		if IsEmail(fmt.Sprintf("test_email_%v", i), input.have).Pass != input.want {
 			t.Errorf("stringRequired failed with input %s", input.have)
 		}
 	}

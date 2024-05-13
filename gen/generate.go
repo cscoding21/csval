@@ -51,7 +51,7 @@ func buildValidator(st csgen.Struct) string {
 
 	builder.WriteString(getImportStatement())
 
-	builder.WriteString("func (obj *TestStruct) Validate() csval.ValidationResult {")
+	builder.WriteString(fmt.Sprintf("func (obj *%s) Validate() csval.ValidationResult {", st.Name))
 	builder.WriteByte('\n')
 
 	builder.WriteString("result := csval.NewSuccessValidationResult()")
@@ -71,6 +71,12 @@ func buildValidator(st csgen.Struct) string {
 		builder.WriteByte('\n')
 		builder.WriteString(fmt.Sprintf("//---Field: %s", f.Name))
 		builder.WriteByte('\n')
+
+		if _, ok := tm["obj"]; ok {
+			builder.WriteString(getCheckForObject(f.Name))
+			builder.WriteByte('\n')
+			continue
+		}
 
 		if _, ok := tm["req"]; ok {
 			builder.WriteString(getIsRequired(f.Name))
@@ -155,25 +161,29 @@ func getImportStatement() string {
 }
 
 func getIsRequired(field string) string {
-	return fmt.Sprintf("result.Append(csval.IsNotEmpty(obj.%s))", field)
+	return fmt.Sprintf("result.Append(csval.IsNotEmpty(\"%s\", obj.%s))", field, field)
 }
 
 func getIsEmail(field string) string {
-	return fmt.Sprintf("result.Append(csval.IsEmail(obj.%s))", field)
+	return fmt.Sprintf("result.Append(csval.IsEmail(\"%s\", obj.%s))", field, field)
 }
 
 func getIsGreaterThan(field string, min string) string {
-	return fmt.Sprintf("result.Append(csval.IsGreaterThan(obj.%s, %v))", field, min)
+	return fmt.Sprintf("result.Append(csval.IsGreaterThan(\"%s\", obj.%s, %v))", field, field, min)
 }
 
 func getIsLessThan(field string, max string) string {
-	return fmt.Sprintf("result.Append(csval.IsLessThan(obj.%s, %v))", field, max)
+	return fmt.Sprintf("result.Append(csval.IsLessThan(\"%s\", obj.%s, %v))", field, field, max)
 }
 
 func getIsLengthGreaterThan(field string, min string) string {
-	return fmt.Sprintf("result.Append(csval.IsLengthGreaterThan(obj.%s, %v))", field, min)
+	return fmt.Sprintf("result.Append(csval.IsLengthGreaterThan(\"%s\", obj.%s, %v))", field, field, min)
 }
 
 func getIsLengthLessThan(field string, max string) string {
-	return fmt.Sprintf("result.Append(csval.IsLengthLessThan(obj.%s, %v))", field, max)
+	return fmt.Sprintf("result.Append(csval.IsLengthLessThan(\"%s\", obj.%s, %v))", field, field, max)
+}
+
+func getCheckForObject(field string) string {
+	return fmt.Sprintf("result.Append(obj.%s.Validate())", field)
 }

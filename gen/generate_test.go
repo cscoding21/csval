@@ -14,6 +14,11 @@ func TestGetTagMap(t *testing.T) {
 
 	tm := getTagMap(tagString)
 
-	t.Log(tm)
+	if len(*tm) != 1 {
+		t.Errorf("tag map length is not 1")
+	}
 
+	if (*tm)["min"] != "21" {
+		t.Errorf("tag map value is not 21")
+	}
 }

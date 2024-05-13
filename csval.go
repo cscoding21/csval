@@ -8,7 +8,12 @@ import (
 // ValidationResult an object that holds the aggregated outcome of validation routines
 type ValidationResult struct {
 	Pass     bool
-	Messages []string
+	Messages []ValidationMessage
+}
+
+type ValidationMessage struct {
+	Message string
+	Field   string
 }
 
 // NewSuccessValidationResult return a new validation result
@@ -17,7 +22,7 @@ func NewSuccessValidationResult() ValidationResult {
 }
 
 // NewFailingValidationResult return a new validation result
-func NewFailingValidationResult(msg ...string) ValidationResult {
+func NewFailingValidationResult(msg ...ValidationMessage) ValidationResult {
 	return ValidationResult{Pass: false, Messages: msg}
 }
 
@@ -31,67 +36,72 @@ func (v *ValidationResult) Append(result ValidationResult) {
 	v.Messages = append(v.Messages, result.Messages...)
 }
 
+// NewValidationMessage return a validation message
+func NewValidationMessage(field string, msg string) ValidationMessage {
+	return ValidationMessage{Message: msg, Field: field}
+}
+
 // IsNotEmpty return a passing result if the string has a valid value
-func IsNotEmpty(input string) ValidationResult {
+func IsNotEmpty(field string, input string) ValidationResult {
 	if len(input) > 0 {
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult("input cannot be empty")
+	return NewFailingValidationResult(NewValidationMessage(field, "input cannot be empty"))
 }
 
 // IsEmail return success if the string is a valid email format
-func IsEmail(input string) ValidationResult {
+func IsEmail(field string, input string) ValidationResult {
 	_, err := mail.ParseAddress(input)
 	if err == nil {
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult("email is not valid")
+	return NewFailingValidationResult(NewValidationMessage(field, "email is not valid"))
 }
 
 // IsValidWebAddress return success if the string is a valid email format
-func IsValidWebAddress(input string) ValidationResult {
+func IsValidWebAddress(field string, input string) ValidationResult {
 	_, err := url.ParseRequestURI(input)
 	if err != nil {
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult("web address is not valid")
+	return NewFailingValidationResult(NewValidationMessage(field, "web address is not valid"))
 }
 
 // IsGreaterThan  return success if the value of the number is less than the maximum
-func IsGreaterThan(input int, target int) ValidationResult {
+func IsGreaterThan(field string, input int, target int) ValidationResult {
 	if input > target {
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult("number is less than allowed")
+	return NewFailingValidationResult(NewValidationMessage(field, "number is less than allowed"))
 }
 
 // IsLessThan  return success if the value of the number is greater than the minimum
-func IsLessThan(input int, target int) ValidationResult {
+func IsLessThan(field string, input int, target int) ValidationResult {
 	if input < target {
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult("number is greater than than allowed")
+	return NewFailingValidationResult(NewValidationMessage(field, "number is greater than than allowed"))
 }
 
 // IsLengthGreaterThan return success if the length of the string is greater than the minimum
-func IsLengthGreaterThan(input string, target int) ValidationResult {
+func IsLengthGreaterThan(field string, input string, target int) ValidationResult {
 	if len(input) > target {
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult("number is less than allowed")
+	return NewFailingValidationResult(NewValidationMessage(field, "number is less than allowed"))
 }
 
 // IsLengthLessThan return success if the length of the string is less than the maximum
-func IsLengthLessThan(input string, target int) ValidationResult {
+func IsLengthLessThan(field string, input string, target int) ValidationResult {
 	if len(input) < target {
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult("number is greater than than allowed")
+	return NewFailingValidationResult(NewValidationMessage(field, "number is greater than than allowed"))
 }
