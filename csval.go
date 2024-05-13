@@ -5,6 +5,7 @@ import (
 	"net/url"
 )
 
+// ValidationResult an object that holds the aggregated outcome of validation routines
 type ValidationResult struct {
 	Pass     bool
 	Messages []string
@@ -20,7 +21,7 @@ func NewFailingValidationResult(msg ...string) ValidationResult {
 	return ValidationResult{Pass: false, Messages: msg}
 }
 
-// Merge aggregate the outcome of 2 validation results
+// Append aggregate the outcome of 2 validation results
 func (v *ValidationResult) Append(result ValidationResult) {
 	if result.Pass {
 		return
@@ -30,7 +31,7 @@ func (v *ValidationResult) Append(result ValidationResult) {
 	v.Messages = append(v.Messages, result.Messages...)
 }
 
-// Exists return a passing result if the string has a valid value
+// IsNotEmpty return a passing result if the string has a valid value
 func IsNotEmpty(input string) ValidationResult {
 	if len(input) > 0 {
 		return NewSuccessValidationResult()
