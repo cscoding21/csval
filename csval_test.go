@@ -105,12 +105,13 @@ func TestIsEmail(t *testing.T) {
 		want bool
 	}{
 		{ok: true, have: "abc", want: false},
+		{ok: true, have: "abc@defg", want: false},
 		{ok: true, have: "jeph@cscoding.io", want: true},
 	}
 
 	for i, input := range testCases {
 		if IsEmail(fmt.Sprintf("test_email_%v", i), input.have).Pass != input.want {
-			t.Errorf("stringRequired failed with input %s", input.have)
+			t.Errorf("Email failed with input %s", input.have)
 		}
 	}
 }
