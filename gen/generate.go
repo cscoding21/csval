@@ -2,6 +2,7 @@ package gen
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 
@@ -15,7 +16,8 @@ func Generate(file ...string) error {
 
 	makeValidator := false
 
-	structs, err := csgen.GetStructs("test_struct.go")
+	//structs, err := csgen.GetStructs("data_test.go")
+	structs, err := csgen.GetStructs(fullPath)
 	if err != nil {
 		return err
 	}
@@ -25,7 +27,9 @@ func Generate(file ...string) error {
 	}
 
 	pkg := structs[0].Package
-	outFileName := "test_struct"
+
+	//---TODO: this is fragile and should be rethought
+	outFileName := os.Getenv("GOFILE")
 
 	builder := csgen.NewCSGenBuilderForFile("csval", pkg)
 	builder.WriteString(getImportStatement())
@@ -120,6 +124,12 @@ func buildValidator(st csgen.Struct, builder *strings.Builder) string {
 
 				builder.WriteByte('\n')
 			}
+
+			if equals, ok := tm["equals"]; ok {
+				builder.WriteString(getIsEqualTo(f.Name, equals.(string)))
+				builder.WriteByte('\n')
+			}
+
 		} else {
 			if _, ok := tm["obj"]; ok {
 				builder.WriteString(getCheckForObject(f.Name))
@@ -214,4 +224,9 @@ func getIsLengthLessThan(field string, max string) string {
 
 func getCheckForObject(field string) string {
 	return fmt.Sprintf("result.Append(obj.%s.Validate())", field)
+}
+
+func getIsEqualTo(field1 string, field2 string) string {
+	fi := fmt.Sprintf("%s:%s", field1, field2)
+	return fmt.Sprintf("result.Append(csval.IsEqualTo(\"%s\", obj.%s, obj.%s))", fi, field1, field2)
 }

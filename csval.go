@@ -116,3 +116,11 @@ func IsLengthLessThan(field string, input string, target int) ValidationResult {
 
 	return NewFailingValidationResult(NewValidationMessage(field, "number is greater than than allowed"))
 }
+
+func IsEqualTo(field string, value1 string, value2 string) ValidationResult {
+	if value1 == value2 {
+		return NewSuccessValidationResult()
+	}
+
+	return NewFailingValidationResult(NewValidationMessage(field, "field values are not equal"))
+}
