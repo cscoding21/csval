@@ -12,6 +12,7 @@ type ValidationResult struct {
 	Messages []ValidationMessage
 }
 
+// ValidationMessage a struct that holds a message and the field that it relates to
 type ValidationMessage struct {
 	Message string
 	Field   string
@@ -117,6 +118,7 @@ func IsLengthLessThan(field string, input string, target int) ValidationResult {
 	return NewFailingValidationResult(NewValidationMessage(field, "number is greater than than allowed"))
 }
 
+// IsEqualTo return success if the two values passed in are equal
 func IsEqualTo(field string, value1 string, value2 string) ValidationResult {
 	if value1 == value2 {
 		return NewSuccessValidationResult()

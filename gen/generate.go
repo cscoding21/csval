@@ -9,14 +9,11 @@ import (
 	"github.com/cscoding21/csgen"
 )
 
+// Generate creates validation methods for the structs in the file specified by go generate
 func Generate(file ...string) error {
 	fullPath := csgen.GetFile()
-
-	fmt.Println(fullPath)
-
 	makeValidator := false
 
-	//structs, err := csgen.GetStructs("data_test.go")
 	structs, err := csgen.GetStructs(fullPath)
 	if err != nil {
 		return err
@@ -36,7 +33,7 @@ func Generate(file ...string) error {
 
 	for _, st := range structs {
 		fmt.Println(st.Name)
-		fileContents := buildValidator(st, builder)
+		buildValidator(st, builder)
 
 		for _, f := range st.Fields {
 			valTags := f.GetTag("csval")
@@ -45,7 +42,6 @@ func Generate(file ...string) error {
 				continue
 			}
 
-			fmt.Print(fileContents)
 			makeValidator = true
 		}
 	}
@@ -63,6 +59,8 @@ func Generate(file ...string) error {
 }
 
 func buildValidator(st csgen.Struct, builder *strings.Builder) string {
+	builder.WriteString(fmt.Sprintf("// Validate checks the fields in the struct %s to ensure it conforms to business rules", st.Name))
+	builder.WriteByte('\n')
 	builder.WriteString(fmt.Sprintf("func (obj *%s) Validate() validate.ValidationResult {", st.Name))
 	builder.WriteByte('\n')
 
@@ -96,7 +94,7 @@ func buildValidator(st csgen.Struct, builder *strings.Builder) string {
 			}
 
 			if _, ok := tm["url"]; ok {
-				builder.WriteString(getIsUrl(f.Name))
+				builder.WriteString(getIsURL(f.Name))
 				builder.WriteByte('\n')
 			}
 
@@ -198,7 +196,7 @@ func getIsEmail(field string) string {
 	return fmt.Sprintf("result.Append(validate.IsEmail(\"%s\", obj.%s))", field, field)
 }
 
-func getIsUrl(field string) string {
+func getIsURL(field string) string {
 	return fmt.Sprintf("result.Append(validate.IsValidWebAddress(\"%s\", obj.%s))", field, field)
 }
 
