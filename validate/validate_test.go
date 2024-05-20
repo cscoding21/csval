@@ -1,4 +1,4 @@
-package csval
+package validate
 
 import (
 	"fmt"

@@ -8,4 +8,4 @@ qual:
 	golint .;
 
 install:
-	go install ./cmd/runner/csval.go
+	go install ./csval.go
