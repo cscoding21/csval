@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/cscoding21/csval/gen"
-	"github.com/cscoding21/csval/tests"
 )
 
 func main() {
@@ -13,9 +12,6 @@ func main() {
 		println("csval is only meant to be run from within \"go generate\".  exiting...")
 		os.Exit(-1)
 	}
-
-	st := tests.FooStruct{}
-	println(st)
 
 	gen.Generate()
 }
