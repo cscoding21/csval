@@ -63,10 +63,10 @@ func Generate(file ...string) error {
 }
 
 func buildValidator(st csgen.Struct, builder *strings.Builder) string {
-	builder.WriteString(fmt.Sprintf("func (obj *%s) Validate() csval.ValidationResult {", st.Name))
+	builder.WriteString(fmt.Sprintf("func (obj *%s) Validate() validate.ValidationResult {", st.Name))
 	builder.WriteByte('\n')
 
-	builder.WriteString("result := csval.NewSuccessValidationResult()")
+	builder.WriteString("result := validate.NewSuccessValidationResult()")
 	builder.WriteByte('\n')
 	builder.WriteByte('\n')
 
@@ -191,35 +191,35 @@ func getImportStatement() string {
 }
 
 func getIsRequired(field string) string {
-	return fmt.Sprintf("result.Append(csval.IsNotEmpty(\"%s\", obj.%s))", field, field)
+	return fmt.Sprintf("result.Append(validate.IsNotEmpty(\"%s\", obj.%s))", field, field)
 }
 
 func getIsEmail(field string) string {
-	return fmt.Sprintf("result.Append(csval.IsEmail(\"%s\", obj.%s))", field, field)
+	return fmt.Sprintf("result.Append(validate.IsEmail(\"%s\", obj.%s))", field, field)
 }
 
 func getIsUrl(field string) string {
-	return fmt.Sprintf("result.Append(csval.IsValidWebAddress(\"%s\", obj.%s))", field, field)
+	return fmt.Sprintf("result.Append(validate.IsValidWebAddress(\"%s\", obj.%s))", field, field)
 }
 
 func getIsIP(field string) string {
-	return fmt.Sprintf("result.Append(csval.IsIP(\"%s\", obj.%s))", field, field)
+	return fmt.Sprintf("result.Append(validate.IsIP(\"%s\", obj.%s))", field, field)
 }
 
 func getIsGreaterThan(field string, min string) string {
-	return fmt.Sprintf("result.Append(csval.IsGreaterThan(\"%s\", obj.%s, %v))", field, field, min)
+	return fmt.Sprintf("result.Append(validate.IsGreaterThan(\"%s\", obj.%s, %v))", field, field, min)
 }
 
 func getIsLessThan(field string, max string) string {
-	return fmt.Sprintf("result.Append(csval.IsLessThan(\"%s\", obj.%s, %v))", field, field, max)
+	return fmt.Sprintf("result.Append(validate.IsLessThan(\"%s\", obj.%s, %v))", field, field, max)
 }
 
 func getIsLengthGreaterThan(field string, min string) string {
-	return fmt.Sprintf("result.Append(csval.IsLengthGreaterThan(\"%s\", obj.%s, %v))", field, field, min)
+	return fmt.Sprintf("result.Append(validate.IsLengthGreaterThan(\"%s\", obj.%s, %v))", field, field, min)
 }
 
 func getIsLengthLessThan(field string, max string) string {
-	return fmt.Sprintf("result.Append(csval.IsLengthLessThan(\"%s\", obj.%s, %v))", field, field, max)
+	return fmt.Sprintf("result.Append(validate.IsLengthLessThan(\"%s\", obj.%s, %v))", field, field, max)
 }
 
 func getCheckForObject(field string) string {
@@ -228,5 +228,5 @@ func getCheckForObject(field string) string {
 
 func getIsEqualTo(field1 string, field2 string) string {
 	fi := fmt.Sprintf("%s:%s", field1, field2)
-	return fmt.Sprintf("result.Append(csval.IsEqualTo(\"%s\", obj.%s, obj.%s))", fi, field1, field2)
+	return fmt.Sprintf("result.Append(validate.IsEqualTo(\"%s\", obj.%s, obj.%s))", fi, field1, field2)
 }
