@@ -1,4 +1,4 @@
-package main
+package csval
 
 import (
 	"github.com/cscoding21/csval/gen"
