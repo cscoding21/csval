@@ -183,7 +183,7 @@ func getGeneratedFileName(originFile string) string {
 
 func getImportStatement() string {
 	return `import (
-	csval "github.com/cscoding21/csval"
+	validate "github.com/cscoding21/csval/validate"
 	)
 
 
