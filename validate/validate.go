@@ -1,6 +1,9 @@
 package validate
 
 import (
+	"errors"
+	"fmt"
+
 	"net"
 	"net/mail"
 	"net/url"
@@ -38,6 +41,20 @@ func (v *ValidationResult) Append(result ValidationResult) {
 
 	v.Pass = false
 	v.Messages = append(v.Messages, result.Messages...)
+}
+
+// Error if errors are available, return an aggregated single error
+func (v *ValidationResult) Error(context string) error {
+	if v.Pass {
+		return nil
+	}
+
+	out := []error{fmt.Errorf(context)}
+	for _, msg := range v.Messages {
+		out = append(out, fmt.Errorf("%s: %s", msg.Field, msg.Message))
+	}
+
+	return errors.Join(out...)
 }
 
 // NewValidationMessage return a validation message
@@ -108,7 +125,7 @@ func IsLengthGreaterThan(field string, input string, target int) ValidationResul
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult(NewValidationMessage(field, "number is less than allowed"))
+	return NewFailingValidationResult(NewValidationMessage(field, fmt.Sprintf("string length is less than %v", target)))
 }
 
 // IsLengthLessThan return success if the length of the string is less than the maximum
@@ -117,7 +134,7 @@ func IsLengthLessThan(field string, input string, target int) ValidationResult {
 		return NewSuccessValidationResult()
 	}
 
-	return NewFailingValidationResult(NewValidationMessage(field, "number is greater than than allowed"))
+	return NewFailingValidationResult(NewValidationMessage(field, fmt.Sprintf("string length is greater than %v", target)))
 }
 
 // IsEqualTo return success if the two values passed in are equal

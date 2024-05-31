@@ -81,6 +81,24 @@ func TestObjectValidate(t *testing.T) {
 	}
 }
 
+func TestGetAggregatedError(t *testing.T) {
+	testStruct := TestStruct{
+		Name:  "test",
+		Email: "tet@Test.com",
+	}
+
+	result := testStruct.Validate()
+
+	if result.Pass {
+		t.Error("validation should fail")
+	}
+
+	err := result.Error("TestGetAggregatedError unit test function failed")
+	if err == nil {
+		t.Error("error aggregator returned nil value. expected messages")
+	}
+}
+
 func TestIsNotEmpty(t *testing.T) {
 	testCases := []struct {
 		ok   bool
