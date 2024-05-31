@@ -4,6 +4,8 @@ import (
 	"net"
 	"net/mail"
 	"net/url"
+
+	"regexp"
 )
 
 // ValidationResult an object that holds the aggregated outcome of validation routines
@@ -125,4 +127,14 @@ func IsEqualTo(field string, value1 string, value2 string) ValidationResult {
 	}
 
 	return NewFailingValidationResult(NewValidationMessage(field, "field values are not equal"))
+}
+
+// SatisfiesRegex return success if the field entered satifies the passed in regex
+func SatisfiesRegex(field string, re string) ValidationResult {
+	regex := regexp.MustCompile(re)
+	if regex.MatchString(field) {
+		return NewSuccessValidationResult()
+	}
+
+	return NewFailingValidationResult(NewValidationMessage(field, "field does not match regex"))
 }

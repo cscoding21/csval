@@ -115,3 +115,28 @@ func TestIsEmail(t *testing.T) {
 		}
 	}
 }
+
+func TestSatisfyRegex(t *testing.T) {
+	testCases := []struct {
+		ok    bool
+		have  string
+		regex string
+		want  bool
+	}{
+		{ok: true, have: "abc21", regex: "^[a-z0-9_-]{3,16}$", want: true},
+		{ok: true, have: "x2", regex: "^[a-z0-9_-]{3,16}$", want: false},
+		{ok: true, have: "abc21&", regex: "^[a-z0-9_-]{3,16}$", want: false},
+		{ok: true, have: "a", regex: "[a-z]", want: true},
+		{ok: true, have: "X", regex: "[a-z]", want: false},
+		{ok: true, have: "9", regex: "[a-z]", want: false},
+		{ok: true, have: "blah", regex: "^(0?[1-9]|1[0-2]):[0-5][0-9]$", want: false},
+		{ok: true, have: "09:59", regex: "^(0?[1-9]|1[0-2]):[0-5][0-9]$", want: true},
+	}
+
+	for _, input := range testCases {
+		result := SatisfiesRegex(input.have, input.regex)
+		if result.Pass != input.want {
+			t.Errorf("Regex %s failed with input %s", input.regex, input.have)
+		}
+	}
+}

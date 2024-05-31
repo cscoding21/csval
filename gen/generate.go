@@ -3,7 +3,6 @@ package gen
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/cscoding21/csgen"
@@ -103,6 +102,11 @@ func buildValidator(st csgen.Struct, builder *strings.Builder) string {
 				builder.WriteByte('\n')
 			}
 
+			if re, ok := tm["regex"]; ok {
+				builder.WriteString(getSatifiesRegex(f.Name, re.(string)))
+				builder.WriteByte('\n')
+			}
+
 			if min, ok := tm["min"]; ok {
 				if f.Type == "string" {
 					builder.WriteString(getIsLengthGreaterThan(f.Name, min.(string)))
@@ -160,10 +164,9 @@ func getTagMap(tags string) *map[string]interface{} {
 		parens := strings.Contains(t, "(")
 
 		if parens {
-			re := regexp.MustCompile(`^(\w*)\((\w*)\)$`)
-			res := re.FindAllStringSubmatch(t, -1)
-			key := res[0][1]
-			val := res[0][2]
+			fp := strings.Index(t, "(")
+			key := t[0:fp]
+			val := t[fp+1 : len(t)-1]
 
 			tagMap[key] = val
 
@@ -227,4 +230,8 @@ func getCheckForObject(field string) string {
 func getIsEqualTo(field1 string, field2 string) string {
 	fi := fmt.Sprintf("%s:%s", field1, field2)
 	return fmt.Sprintf("result.Append(validate.IsEqualTo(\"%s\", obj.%s, obj.%s))", fi, field1, field2)
+}
+
+func getSatifiesRegex(field string, re string) string {
+	return fmt.Sprintf("result.Append(validate.SatisfiesRegex(\"%s\", obj.%s, \"%s\"))", field, field, re)
 }
