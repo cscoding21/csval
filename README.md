@@ -106,6 +106,7 @@ To use CSVal, annotate the struct fields with the __csval__ tag.  The following 
 |__max(x)__|If the field type is string, the length must be less than or equal to x.  If the type is numeric, the value must be less than or equal to x|
 |__equals(x)__|The field must be equal to the value of another field, represented by x|
 |__regex(x)__|The field must satisfy the regular expression represented by x|
+|__validate__|The field will have its own Validate function called.  This is for fields of a type that has CS validation rules|
 
 Post code generation, testing the validity of an object is as simple as calling the __Validate__ method.  For example...
 

@@ -133,7 +133,7 @@ func buildValidator(st csgen.Struct, builder *strings.Builder) string {
 			}
 
 		} else {
-			if _, ok := tm["obj"]; ok {
+			if _, ok := tm["validate"]; ok {
 				builder.WriteString(getCheckForObject(f.Name))
 				builder.WriteByte('\n')
 				continue

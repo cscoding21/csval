@@ -4,3 +4,7 @@ github.com/cscoding21/csgen v0.0.0-20240530173429-a1ca149f8fb9 h1:3qr9KuQflL/NPB
 github.com/cscoding21/csgen v0.0.0-20240530173429-a1ca149f8fb9/go.mod h1:ga+rorlYJxRcUIuILWbP6TjxLH0wm5EM5BcecCmdjZk=
 github.com/cscoding21/csgen v0.0.0-20240530181008-e6377baaac38 h1:FBiwbkbh7KTwQ5DiXM5fFoBdWvWEd2wh3aTH0BXU2jk=
 github.com/cscoding21/csgen v0.0.0-20240530181008-e6377baaac38/go.mod h1:ga+rorlYJxRcUIuILWbP6TjxLH0wm5EM5BcecCmdjZk=
+github.com/cscoding21/csgen v0.2.0 h1:uOf7u7IjKzjf0ES+b5VxEmBehgG8nuImN9BKdSSWbzk=
+github.com/cscoding21/csgen v0.2.0/go.mod h1:ga+rorlYJxRcUIuILWbP6TjxLH0wm5EM5BcecCmdjZk=
+github.com/cscoding21/csgen v0.2.1 h1:033VN29R+Q8q6GsuNCOeZFuOU/+iDO6P/n84gZ4frK0=
+github.com/cscoding21/csgen v0.2.1/go.mod h1:ga+rorlYJxRcUIuILWbP6TjxLH0wm5EM5BcecCmdjZk=

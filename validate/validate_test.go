@@ -12,7 +12,7 @@ type TestStruct struct {
 	Address  string
 	Password string        `csval:"min(3),max(11)"`
 	Age      int           `csval:"min(18),max(65)"`
-	Sub      TestSubStruct `csval:"obj"`
+	Sub      TestSubStruct `csval:"validate"`
 }
 
 type TestSubStruct struct {
