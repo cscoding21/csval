@@ -28,7 +28,6 @@ func Generate(file ...string) error {
 	outFileName := os.Getenv("GOFILE")
 
 	builder := csgen.NewCSGenBuilderForFile("csval", pkg)
-	builder.WriteString(getImportStatement())
 
 	for _, st := range structs {
 		fmt.Println(st.Name)
@@ -46,7 +45,7 @@ func Generate(file ...string) error {
 	}
 
 	if makeValidator {
-		valFile := getGeneratedFileName(strings.ToLower(outFileName))
+		valFile := csgen.GetFileName("csval", "", outFileName)
 		err = csgen.WriteGeneratedGoFile(valFile, builder.String())
 		if err != nil {
 			fmt.Printf("error writing file: %v", err)
@@ -176,19 +175,6 @@ func getTagMap(tags string) *map[string]interface{} {
 	}
 
 	return &tagMap
-}
-
-func getGeneratedFileName(originFile string) string {
-	return fmt.Sprintf("%s_csval.gen.go", strings.TrimSuffix(originFile, ".go"))
-}
-
-func getImportStatement() string {
-	return `import (
-	validate "github.com/cscoding21/csval/validate"
-	)
-
-
-	`
 }
 
 func getIsRequired(field string) string {
