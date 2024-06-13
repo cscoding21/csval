@@ -2,6 +2,8 @@ github.com/cscoding21/csgen v0.4.0 h1:6YVgZSfEiKKJfh9kNrVFiqS7bxC8ir9ubiGtdUEmgF
 github.com/cscoding21/csgen v0.4.0/go.mod h1:whEgoVIbPf7ptckVgvwqTBNCDCp6yJRL89iCPq/z6Ls=
 github.com/cscoding21/csgen v0.4.1 h1://5MqOTH/Wa+4jxm+zeDSZeoRpk9zT0fLip07WTkZGg=
 github.com/cscoding21/csgen v0.4.1/go.mod h1:whEgoVIbPf7ptckVgvwqTBNCDCp6yJRL89iCPq/z6Ls=
+github.com/cscoding21/csgen v0.4.2 h1:FfuQo3/eeJJUT9C/UXWChZZglOtjCu/MNcRNgnNZzjs=
+github.com/cscoding21/csgen v0.4.2/go.mod h1:whEgoVIbPf7ptckVgvwqTBNCDCp6yJRL89iCPq/z6Ls=
 golang.org/x/mod v0.18.0 h1:5+9lSbEzPSdWkH32vYPBwEpX8KwDbM52Ud9xBUvNlb0=
 golang.org/x/mod v0.18.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
 golang.org/x/sync v0.7.0 h1:YsImfSBoP9QPYL0xyKJPq0gcaJdG3rInoqxTWbfQu9M=
