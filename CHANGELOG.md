@@ -1,3 +1,9 @@
+## v0.3.2 (2024-06-13)
+
+### Fix
+
+- update core library to conform to Go naming standards
+
 ## v0.3.1 (2024-06-13)
 
 ### Fix
