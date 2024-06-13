@@ -1,3 +1,9 @@
+## v0.3.1 (2024-06-13)
+
+### Fix
+
+- update csgen version part 2
+
 ## v0.3.0 (2024-06-13)
 
 ### Feat
