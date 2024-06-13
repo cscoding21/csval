@@ -1,3 +1,13 @@
+## v0.3.0 (2024-06-13)
+
+### Feat
+
+- update csgen version
+
+### Refactor
+
+- swap out file name generation function with the same function from the csgen base library
+
 ## v0.2.1 (2024-06-04)
 
 ### Refactor
