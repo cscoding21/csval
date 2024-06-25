@@ -1,3 +1,9 @@
+## v0.4.1 (2024-06-25)
+
+### Fix
+
+- update csgen with a fix for absolute path handing in the GetFile function
+
 ## v0.4.0 (2024-06-25)
 
 ### Feat
