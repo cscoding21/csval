@@ -10,7 +10,7 @@ import (
 
 // Generate creates validation methods for the structs in the file specified by go generate
 func Generate(file ...string) error {
-	fullPath := csgen.GetFile()
+	fullPath := csgen.GetFile(file...)
 	makeValidator := false
 
 	structs, err := csgen.GetStructs(fullPath)
@@ -54,6 +54,24 @@ func Generate(file ...string) error {
 	}
 
 	return nil
+}
+
+// CheckFileHasValidatorTags returns true if a file contains structs that have csvalidator tags and false otherwise
+func CheckFileHasValidatorTags(path string) (bool, error) {
+	structs, err := csgen.GetStructs(path)
+	if err != nil {
+		return false, err
+	}
+
+	for _, st := range structs {
+		for _, field := range st.Fields {
+			if len(field.GetTag("csval")) > 0 {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
 }
 
 func buildValidator(st csgen.Struct, builder *strings.Builder) string {
