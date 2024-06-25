@@ -1,3 +1,9 @@
+## v0.4.0 (2024-06-25)
+
+### Feat
+
+- add function to check if a file has validator tags and fixed file loading bug
+
 ## v0.3.2 (2024-06-13)
 
 ### Fix
