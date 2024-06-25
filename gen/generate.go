@@ -2,7 +2,7 @@ package gen
 
 import (
 	"fmt"
-	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/cscoding21/csgen"
@@ -23,10 +23,6 @@ func Generate(file ...string) error {
 	}
 
 	pkg := structs[0].Package
-
-	//---TODO: this is fragile and should be rethought
-	outFileName := os.Getenv("GOFILE")
-
 	builder := csgen.NewCSGenBuilderForFile("csval", pkg)
 
 	for _, st := range structs {
@@ -45,7 +41,9 @@ func Generate(file ...string) error {
 	}
 
 	if makeValidator {
-		valFile := csgen.GetFileName("csval", "", outFileName)
+		outFileName := filepath.Base(fullPath)
+		outPath := filepath.Dir(fullPath)
+		valFile := csgen.GetFileName("csval", outPath, outFileName)
 		err = csgen.WriteGeneratedGoFile(valFile, builder.String())
 		if err != nil {
 			fmt.Printf("error writing file: %v", err)
