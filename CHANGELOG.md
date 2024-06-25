@@ -1,3 +1,9 @@
+## v0.4.2 (2024-06-25)
+
+### Fix
+
+- ensure output validation is in the same directory as the source file
+
 ## v0.4.1 (2024-06-25)
 
 ### Fix
