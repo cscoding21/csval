@@ -1,6 +1,6 @@
 module github.com/cscoding21/csval
 
-go 1.21.7
+go 1.23
 
 require github.com/cscoding21/csgen v0.4.3
 
